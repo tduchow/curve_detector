@@ -67,22 +67,18 @@ def callback(data):
 			center_range = (first_pt[1] + last_pt[1])/2
 			center_angle = (begin_th + end_th)/2
 			radius = polar_distance(first_pt, last_pt)/2
-			arc = Point32()
-			arc.x = center_range*math.cos(math.degrees(center_angle))
-			arc.y = center_range*math.sin(math.degrees(center_angle))
-			#pc.points.append(arc)
-			f = Point32()
-			f.x = polar_to_rect_x(first_pt)
-			f.y = polar_to_rect_y(first_pt)
-			pc.points.append(f)
-			l = Point32()
-			l.x = polar_to_rect_x(last_pt)
-			l.y = polar_to_rect_y(last_pt)
-			pc.points.append(l)
-			#pc.channels[0].values.append(radius)
-			#pc.channels[1].values.append(mean)
-			#pc.channels[2].values.append(std_dev)
+			
+			pc.points.append(makePoint32Polar((center_angle, center_range))
+			
+			#pc.points.append(makePoint32Polar(first_pt))
+			
+			#pc.points.append(makePoint32Polar(last_pt))
+			pc.channels[0].values.append(radius)
+			pc.channels[1].values.append(mean)
+			pc.channels[2].values.append(std_dev)
+	
 	pub.publish(pc)
+
 
 def filter_intervals(ranges, intervals):
 	min_length = 4 
@@ -95,10 +91,10 @@ def polar_distance(p1, p2):
 	return math.sqrt(p1[1]**2 + p2[1]**2 - 2*p1[1]*p2[1]*math.cos(math.radians(p1[0]-p2[0])))
 
 def polar_to_rect_x(p):
-	return p[1]*math.cos(math.degrees(p[0]))
+	return -p[1]*math.cos(math.radians(p[0]))#negating x fixes coordinate transform TODO: use ROS transforms 
 
 def polar_to_rect_y(p):
-	return p[1]*math.sin(math.degrees(p[0]))
+	return p[1]*math.sin(math.radians(p[0]))
 
 #return the angle at p2 between p1 and p3, in degrees
 def internal_angle(p1, p2, p3):
@@ -107,6 +103,8 @@ def internal_angle(p1, p2, p3):
 	b = polar_distance(p2, p3)
 	return math.degrees(math.acos((a**2+b**2-c**2)/(2*a*b)))
 
+def makePoint32Polar(p):
+	return Point32(polar_to_rect_x(p), polar_to_rect_y(p), 0)
 	
 
 def curve_detector():
