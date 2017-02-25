@@ -1,3 +1,4 @@
 curve_detector
 
-This is a ROS node that finds arced segments of a LaserScan
+This is a ROS node that finds arced segments of a LaserScan.
+It is based on the algorithm in this paper: http://miarn.sourceforge.net/pdf/a1738b.pdf
